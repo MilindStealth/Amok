@@ -6,22 +6,22 @@ import { useTexture } from "@react-three/drei"
 import * as THREE from "three"
 
 const GALLERY_IMAGES = [
-  "/Images/img-1.jpg",
-  "/Images/img-2.jpg",
-  "/Images/img-3.jpg",
-  "/Images/img-4.jpg",
-  "/Images/img-5.jpg",
-  "/Images/img-6.jpg",
-  "/Images/img-7.jpg",
-  "/Images/img-8.jpg",
-  "/Images/img-9.jpg",
-  "/Images/img-10.jpg",
-  "/Images/img-11.jpg",
-  "/Images/img-12.jpg",
-  "/Images/img-13.jpg",
-  "/Images/img-14.jpg",
-  "/Images/img-15.jpg",
-  "/Images/img-16.jpg",
+  "/IMAGES/img-1.jpg",
+  "/IMAGES/img-2.jpg",
+  "/IMAGES/img-3.jpg",
+  "/IMAGES/img-4.jpg",
+  "/IMAGES/img-5.jpg",
+  "/IMAGES/img-6.jpg",
+  "/IMAGES/img-7.jpg",
+  "/IMAGES/img-8.jpg",
+  "/IMAGES/img-9.jpg",
+  "/IMAGES/img-10.jpg",
+  "/IMAGES/img-11.jpg",
+  "/IMAGES/img-12.jpg",
+  "/IMAGES/img-13.jpg",
+  "/IMAGES/img-14.jpg",
+  "/IMAGES/img-15.jpg",
+  "/IMAGES/img-16.jpg",
 ]
 
 interface ParticleSphereProps {
