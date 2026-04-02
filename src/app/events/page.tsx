@@ -45,26 +45,26 @@ function formatCardDate(date: Date): string {
 function EmptyCard({ date }: { date: Date }) {
   return (
     <div style={{
-      border: "1px solid rgba(255,255,255,0.04)",
+      border: "1px solid rgba(255,255,255,0.1)",
       padding: "22px 20px 20px",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
       minHeight: "320px",
       position: "relative",
-      background: "transparent",
+      background: "rgba(255,255,255,0.02)",
     }}>
       <p style={{
         fontSize: "10px",
         letterSpacing: "0.16em",
-        color: "rgba(255,255,255,0.15)",
+        color: "rgba(255,255,255,0.4)",
         fontFamily: "var(--font-saans, sans-serif)",
         fontWeight: 300,
         textTransform: "uppercase",
       }}>
         {formatCardDate(date)}
       </p>
-      {/* Centred dash — subtle "nothing here" indicator */}
+      {/* Centred dash — no event indicator */}
       <div style={{
         position: "absolute",
         inset: 0,
@@ -73,9 +73,9 @@ function EmptyCard({ date }: { date: Date }) {
         justifyContent: "center",
       }}>
         <span style={{
-          width: "18px",
+          width: "24px",
           height: "1px",
-          background: "rgba(255,255,255,0.08)",
+          background: "rgba(255,255,255,0.2)",
           display: "block",
         }} />
       </div>
