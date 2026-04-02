@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: lime accent color, rounded square (maskable safe zone is center 80%) -->
+  <rect width="512" height="512" rx="80" fill="#c9ff47"/>
+
+  <!-- Letter A — geometric, tight tracking to match site typography -->
+  <!-- Built from paths so it renders identically regardless of fonts installed -->
+  <g transform="translate(256, 256)">
+    <!-- Left leg -->
+    <polygon points="-105,100 -45,100 0,-90 45,-90 105,100 45,100 20,20 -20,20" fill="#0a0a0a"/>
+    <!-- Crossbar -->
+    <rect x="-48" y="18" width="96" height="28" fill="#0a0a0a"/>
+  </g>
+</svg>

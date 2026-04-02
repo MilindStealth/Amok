@@ -1,26 +1,379 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS  —  the single source of truth
+   Change a value here and it updates everywhere in the site.
+═══════════════════════════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+  /* ── COLORS ────────────────────────────────────────────── */
+  --color-bg:             #000000;    /* pure black canvas         */
+  --color-fg:             #F0F0F0;    /* off-white text            */
+  --color-accent:         #D4A560;    /* warm gold — replace with brand colour */
+  --color-accent-dim:     #A07030;    /* deeper gold for contrast              */
+  --color-surface:        #111111;    /* cards, panels             */
+  --color-surface-raised: #191919;    /* hover state on surface    */
+  --color-muted:          #666666;    /* secondary text            */
+  --color-border:         rgba(255, 255, 255, 0.07);
+  --color-border-strong:  rgba(255, 255, 255, 0.12);
+
+  /* ── FONTS ─────────────────────────────────────────────── */
+  --font-display: var(--font-fenul), "Georgia", serif;
+  --font-body:    var(--font-saans), "Helvetica Neue", system-ui, sans-serif;
+  --font-mono:    "Courier New", monospace;
+
+  /* ── FLUID TYPE SCALE ──────────────────────────────────── */
+  /* clamp(min, preferred, max) — scales smoothly with viewport */
+  --text-2xs:     clamp(0.625rem,  0.8vw,  0.7rem);
+  --text-xs:      clamp(0.7rem,    1vw,    0.75rem);
+  --text-sm:      clamp(0.8rem,    1.2vw,  0.875rem);
+  --text-base:    clamp(0.9rem,    1.4vw,  1rem);
+  --text-lg:      clamp(1rem,      1.8vw,  1.125rem);
+  --text-xl:      clamp(1.1rem,    2.2vw,  1.375rem);
+  --text-2xl:     clamp(1.3rem,    3vw,    1.75rem);
+  --text-3xl:     clamp(1.6rem,    4vw,    2.25rem);
+  --text-4xl:     clamp(2rem,      5.5vw,  3.25rem);
+  --text-5xl:     clamp(2.5rem,    7vw,    4.5rem);
+  --text-6xl:     clamp(3rem,      9vw,    6.5rem);
+  --text-display: clamp(3.75rem,   12vw,   10rem);   /* hero headlines */
+
+  /* ── LETTER SPACING ────────────────────────────────────── */
+  --tracking-tightest: -0.05em;    /* massive display text    */
+  --tracking-tight:    -0.03em;    /* large headings          */
+  --tracking-snug:     -0.01em;    /* subheadings             */
+  --tracking-normal:    0em;
+  --tracking-wide:      0.08em;    /* small text, UI labels   */
+  --tracking-wider:     0.15em;
+  --tracking-widest:    0.3em;     /* eyebrow / caps labels   */
+
+  /* ── LINE HEIGHT ────────────────────────────────────────── */
+  --leading-none:    1;
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+  --leading-loose:   1.8;
+
+  /* ── BORDER RADIUS ─────────────────────────────────────── */
+  --radius-xs:   0.2rem;
+  --radius-sm:   0.375rem;
+  --radius-md:   0.625rem;
+  --radius-lg:   1rem;
+  --radius-xl:   1.5rem;
+  --radius-2xl:  2rem;
+  --radius-3xl:  3rem;
+  --radius-full: 9999px;
+
+  /* ── SHADOWS / GLOWS ───────────────────────────────────── */
+  /* Dark-mode sites use glows, not shadows */
+  --shadow-sm:          0 1px 3px  rgba(0,0,0,0.5);
+  --shadow-md:          0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:          0 8px 40px rgba(0,0,0,0.6);
+  --glow-accent:        0 0 40px   rgba(212,165,96,0.15);
+  --glow-accent-strong: 0 0 80px   rgba(212,165,96,0.30);
+
+  /* ── MOTION EASING ─────────────────────────────────────── */
+  --ease-linear:       linear;
+  --ease-out-expo:     cubic-bezier(0.19, 1, 0.22, 1);    /* fast-out, smooth decel */
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);    /* symmetric S-curve      */
+  --ease-spring:       cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot       */
+  --ease-in-circ:      cubic-bezier(0.55, 0, 1, 0.45);
+
+  /* ── MOTION DURATION ───────────────────────────────────── */
+  --duration-instant:   80ms;
+  --duration-fast:      180ms;
+  --duration-normal:    380ms;
+  --duration-slow:      650ms;
+  --duration-cinematic: 1100ms;
+
+  /* ── SPACING ────────────────────────────────────────────── */
+  --space-section: clamp(5rem, 12vw, 11rem);  /* between page sections     */
+  --space-container-x: clamp(1.25rem, 5vw, 4rem); /* horizontal page margins */
+  --space-container-max: 1440px;
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   TAILWIND V4 THEME BRIDGE
+   Exposes tokens as Tailwind utility classes.
+   e.g. --color-accent → bg-accent, text-accent, border-accent
+═══════════════════════════════════════════════════════════ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-bg:             var(--color-bg);
+  --color-fg:             var(--color-fg);
+  --color-accent:         var(--color-accent);
+  --color-accent-dim:     var(--color-accent-dim);
+  --color-surface:        var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-muted:          var(--color-muted);
+  --color-border:         var(--color-border);
+  --color-border-strong:  var(--color-border-strong);
+
+  /* Fonts → font-display, font-body classes */
+  --font-display: var(--font-display);
+  --font-body:    var(--font-body);
+  --font-sans:    var(--font-body);
+
+  /* Type scale → text-display, text-6xl, text-5xl ... */
+  --text-2xs:     var(--text-2xs);
+  --text-xs:      var(--text-xs);
+  --text-sm:      var(--text-sm);
+  --text-base:    var(--text-base);
+  --text-lg:      var(--text-lg);
+  --text-xl:      var(--text-xl);
+  --text-2xl:     var(--text-2xl);
+  --text-3xl:     var(--text-3xl);
+  --text-4xl:     var(--text-4xl);
+  --text-5xl:     var(--text-5xl);
+  --text-6xl:     var(--text-6xl);
+  --text-display: var(--text-display);
+
+  /* Radius → rounded-lg, rounded-2xl ... */
+  --radius-xs:   var(--radius-xs);
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-2xl:  var(--radius-2xl);
+  --radius-3xl:  var(--radius-3xl);
+  --radius-full: var(--radius-full);
+
+  /* Easing → ease-out-expo, ease-spring ... */
+  --ease-out-expo:     var(--ease-out-expo);
+  --ease-in-out-quart: var(--ease-in-out-quart);
+  --ease-spring:       var(--ease-spring);
+
+  /* Duration → duration-fast, duration-cinematic ... */
+  --duration-instant:   var(--duration-instant);
+  --duration-fast:      var(--duration-fast);
+  --duration-normal:    var(--duration-normal);
+  --duration-slow:      var(--duration-slow);
+  --duration-cinematic: var(--duration-cinematic);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+
+/* ═══════════════════════════════════════════════════════════
+   BASE RESET
+   IMPORTANT: inside @layer base so Tailwind utility classes
+   (which live in @layer utilities) always win over these rules.
+   Without this, "* { padding: 0 }" would override px-4 etc.
+═══════════════════════════════════════════════════════════ */
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: auto; /* Lenis manages scroll — don't let CSS fight it */
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-saans), var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 300;
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* ── Text selection ───────────────────────────────────── */
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  /* ── Hide scrollbar (Lenis provides the UX) ────────────── */
+  ::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   FILM GRAIN OVERLAY
+   The #1 detail that makes a site feel cinematic and premium.
+   It's a semi-transparent noise texture fixed over the page.
+   Invisible up close, but adds texture and depth to flat colors.
+═══════════════════════════════════════════════════════════ */
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 110%;
+  height: 110%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.048;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px;
+  animation: grain 0.35s steps(1) infinite;
+}
+
+@keyframes grain {
+  0%  { transform: translate(0,   0  ); }
+  10% { transform: translate(-1%, -2%); }
+  20% { transform: translate(-3%,  1%); }
+  30% { transform: translate( 2%, -3%); }
+  40% { transform: translate(-2%,  4%); }
+  50% { transform: translate( 1%, -1%); }
+  60% { transform: translate(-4%,  2%); }
+  70% { transform: translate( 3%,  1%); }
+  80% { transform: translate(-2%, -3%); }
+  90% { transform: translate( 2%,  3%); }
+  100%{ transform: translate( 0,   0  ); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   LENIS SMOOTH SCROLL — required CSS
+═══════════════════════════════════════════════════════════ */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MICE SECTION — image-clipped display text
+   Must live in CSS (not inline styles) for -webkit-background-clip: text
+   to work reliably across all browsers.
+═══════════════════════════════════════════════════════════ */
+
+.mice-text-masked {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   In @layer utilities so they sit above base but below
+   any inline style overrides.
+═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE OVERRIDES  (≤ 768 px)
+═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Prevent tap-highlight flash on interactive elements */
+  button, a { -webkit-tap-highlight-color: transparent; }
+
+  /* Ensure inputs don't auto-zoom on iOS */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* Bracket-btn hover spacing looks odd on touch — disable */
+  .bracket-btn:hover { letter-spacing: inherit !important; }
+}
+
+
+@layer utilities {
+  .clip-overflow {
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-fg) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .inset-border        { box-shadow: inset 0 0 0 1px var(--color-border); }
+  .inset-border-strong { box-shadow: inset 0 0 0 1px var(--color-border-strong); }
+  .glow-accent         { box-shadow: var(--glow-accent); }
+
+  .container-x {
+    padding-inline: var(--space-container-x);
+  }
+
+  .section-y {
+    padding-block: var(--space-section);
+  }
+
+  /* ── Hover scale ────────────────────────────────────────────
+     Apply to images, cards, or any element that should subtly
+     scale on hover. Uses expo ease. Pair with overflow:hidden
+     on the parent.                                            */
+  .hover-scale {
+    transition: transform 1s cubic-bezier(.16, 1, .3, 1);
+  }
+  .hover-scale:hover {
+    transform: scale(1.04);
+  }
+
+  /* ── Section top rule ───────────────────────────────────────
+     Thin 1px line above section headers.                         */
+  .section-rule {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ── Bracket button hover — brackets spread apart ───────────
+     Add class "bracket-btn" to any [ label ] style element.
+     Letter-spacing widens on hover for a premium feel.          */
+  .bracket-btn {
+    transition: letter-spacing 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+                color 0.3s ease,
+                opacity 0.3s ease;
+  }
+  .bracket-btn:hover {
+    letter-spacing: 0.38em !important;
+    color: #fff !important;
+  }
+
+  /* ── Reveal clip — parent for awwwards-style text wipe-up ─── */
+  .reveal-clip {
+    overflow: hidden;
+    display: block;
+  }
+
+  /* ── Filter button flicker — CRT-style burst on hover ──────── */
+  .filter-btn:hover {
+    animation: btn-flicker 0.45s ease-out forwards;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes btn-flicker {
+  0%   { opacity: 1;    }
+  6%   { opacity: 0.4;  }
+  10%  { opacity: 1;    }
+  18%  { opacity: 0.65; }
+  22%  { opacity: 1;    }
+  38%  { opacity: 0.8;  }
+  42%  { opacity: 1;    }
+  58%  { opacity: 0.55; }
+  62%  { opacity: 1;    }
+  100% { opacity: 1;    }
 }

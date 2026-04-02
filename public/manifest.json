@@ -1,0 +1,72 @@
+{
+  "name": "Milind Bagchi — Creative Portfolio",
+  "short_name": "Milind",
+  "description": "Premium creative portfolio — design, development, and WebGL.",
+
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+
+  "orientation": "portrait-primary",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["portfolio", "design", "entertainment"],
+
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "View Work",
+      "short_name": "Work",
+      "url": "/#work",
+      "description": "See selected projects",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Contact",
+      "short_name": "Contact",
+      "url": "/#contact",
+      "description": "Get in touch",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+
+  "screenshots": []
+}
