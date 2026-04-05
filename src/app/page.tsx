@@ -5,7 +5,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePageTransition } from "@/providers/TransitionProvider";
-import { EVENTS, type Event } from "@/constants";
+import { EVENTS } from "@/constants";
 import { ScrambleText } from "@/components/motion/ScrambleText";
 import { ShutterReveal } from "@/components/motion/ShutterReveal";
 import { Footer } from "@/components/layout/Footer";
@@ -14,7 +14,6 @@ import { SocialsSection } from "@/components/sections/SocialsSection";
 import { EventCard } from "@/components/ui/EventCard";
 import { WebGLShaderBackground } from "@/components/ui/WebGLShaderBackground";
 import dynamic from "next/dynamic";
-// import { BurnTransitionOverlay } from "@/components/ui/BurnTransitionOverlay"; // commented out
 
 const ModelViewer = dynamic(
   () => import("@/components/sections/ModelViewer").then(m => m.ModelViewer),
@@ -99,116 +98,6 @@ const MICE_IMAGES = [
   { src: "/MICE/micey 3.png", alt: "Venue lounge" },
 ];
 
-// ── Dark-card "BOOK TICKETS" button ────────────────────────────────────────────
-// Default: solid white fill, dark icon + text (as per design).
-// Hover:   RunningStrokeButton style — spinning conic arc border, black fill.
-function CardBookButton({ price }: { price: string }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        padding: "1px",
-        cursor: "pointer",
-        background: hovered ? "transparent" : "#fff",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* ── Hover only: spinning conic arc border ── */}
-      {hovered && (
-        <span aria-hidden style={{
-          position: "absolute",
-          width: "400px", height: "400px",
-          top: "50%", left: "50%",
-          pointerEvents: "none",
-          background: "conic-gradient(from 0deg, transparent 320deg, rgba(255,255,255,0.95) 355deg, transparent 360deg)",
-          animation: "rs-spin 2.4s linear infinite",
-        }} />
-      )}
-
-      {/* Inner content row */}
-      <span style={{
-        position: "relative",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        gap: "10px",
-        background: hovered ? "#000" : "#fff",
-        padding: "11px 14px",
-        zIndex: 1,
-        fontSize: "10px",
-        letterSpacing: hovered ? "0.22em" : "0.13em",
-        fontFamily: "var(--font-saans, sans-serif)", fontWeight: 300,
-        color: hovered ? "#fff" : "#0a0806",
-        whiteSpace: "nowrap",
-        transition: "background 0.2s, color 0.2s, letter-spacing 0.3s",
-      }}>
-        <img
-          src="/Logos/AMOK SIGN.svg"
-          alt=""
-          style={{
-            width: "16px", height: "auto", flexShrink: 0,
-            filter: hovered ? "none" : "invert(1)",
-            transition: "filter 0.2s",
-          }}
-        />
-        BOOK TICKETS FOR {price}
-      </span>
-    </div>
-  );
-}
-
-// ── Sunset-card "BOOK TICKETS" button ──────────────────────────────────────────
-// Default: solid black fill, white icon + text (light bg section).
-// Hover:   RunningStrokeButton style — spinning conic arc border, black fill.
-function SunsetCardBookButton({ price }: { price: string }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        padding: "1px",
-        cursor: "pointer",
-        background: "#000",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Hover only: spinning conic arc border */}
-      {hovered && (
-        <span aria-hidden style={{
-          position: "absolute",
-          width: "400px", height: "400px",
-          top: "50%", left: "50%",
-          pointerEvents: "none",
-          background: "conic-gradient(from 0deg, transparent 320deg, rgba(255,255,255,0.95) 355deg, transparent 360deg)",
-          animation: "rs-spin 2.4s linear infinite",
-        }} />
-      )}
-
-      <span style={{
-        position: "relative",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        gap: "10px",
-        background: "#000",
-        padding: "11px 14px",
-        zIndex: 1,
-        fontSize: "10px",
-        letterSpacing: hovered ? "0.22em" : "0.13em",
-        fontFamily: "var(--font-saans, sans-serif)", fontWeight: 300,
-        color: "#fff",
-        whiteSpace: "nowrap",
-        transition: "letter-spacing 0.3s",
-      }}>
-        <img src="/Logos/AMOK SIGN.svg" alt="" style={{ width: "16px", height: "auto", flexShrink: 0 }} />
-        BOOK TICKETS FOR {price}
-      </span>
-    </div>
-  );
-}
 
 // ── Apple-style slider prev/next buttons ───────────────────────────────────────
 function SliderControls({ onPrev, onNext, dark, prevDisabled = false, nextDisabled = false }: { onPrev: () => void; onNext: () => void; dark: boolean; prevDisabled?: boolean; nextDisabled?: boolean }) {
@@ -538,22 +427,42 @@ export default function HomePage() {
 
           {/* Tab Switcher */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "clamp(32px, 5vh, 56px)" }}>
-            <div style={{ display: "flex", gap: "10px", padding: "10px", borderRadius: "60px" }}>
-              {/* Iconic Nights tab */}
+            <div style={{
+              position: "relative",
+              display: "flex",
+              gap: "10px",
+              padding: "10px",
+              borderRadius: "60px",
+            }}>
+              {/* Sliding pill */}
+              <div style={{
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+                width: isMobile ? "clamp(140px, 40vw, 200px)" : "361px",
+                height: "68px",
+                borderRadius: "60px",
+                background: "rgba(0,0,0,0.55)",
+                border: `1px solid ${activeTab === "night" ? "#16398d" : "#eb722f"}`,
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                transform: activeTab === "night" ? "translateX(0)" : "translateX(calc(100% + 10px))",
+                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.6s ease",
+                pointerEvents: "none",
+              }} />
+
+              {/* Iconic Nights button */}
               <button
                 onClick={() => setActiveTab("night")}
                 style={{
                   position: "relative",
+                  zIndex: 1,
                   width: isMobile ? "clamp(140px, 40vw, 200px)" : "361px",
                   height: "68px",
                   borderRadius: "60px",
-                  border: activeTab === "night" ? "1px solid #16398d" : "1px solid transparent",
-                  background: activeTab === "night" ? "rgba(0,0,0,0.55)" : "transparent",
+                  border: "none",
+                  background: "transparent",
                   cursor: "pointer",
-                  overflow: "hidden",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                  transition: "border-color 0.6s ease, background 0.6s ease",
                 }}
               >
                 <span style={{
@@ -569,21 +478,18 @@ export default function HomePage() {
                 </span>
               </button>
 
-              {/* Sunset Parties tab */}
+              {/* Sunset Parties button */}
               <button
                 onClick={() => setActiveTab("sunset")}
                 style={{
                   position: "relative",
+                  zIndex: 1,
                   width: isMobile ? "clamp(140px, 40vw, 200px)" : "361px",
                   height: "68px",
                   borderRadius: "60px",
-                  border: activeTab === "sunset" ? "1px solid #eb722f" : "1px solid transparent",
-                  background: activeTab === "sunset" ? "rgba(0,0,0,0.55)" : "transparent",
+                  border: "none",
+                  background: "transparent",
                   cursor: "pointer",
-                  overflow: "hidden",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                  transition: "border-color 0.6s ease, background 0.6s ease",
                 }}
               >
                 <span style={{
