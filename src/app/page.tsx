@@ -317,39 +317,31 @@ export default function HomePage() {
   const miceTextRef        = useRef<HTMLDivElement>(null);
   const nightCardsRef      = useRef<HTMLDivElement>(null);
   const sunsetCardsRef     = useRef<HTMLDivElement>(null);
+  const cardsWrapperRef    = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const [nightHovered,  setNightHovered]  = useState(false);
-  const [sunsetHovered, setSunsetHovered] = useState(false);
-  const [cursorPos,     setCursorPos]     = useState({ x: 0, y: 0 });
-  const [activeSection, setActiveSection] = useState<"night" | "sunset" | null>(null);
+  const [activeTab, setActiveTab] = useState<"night" | "sunset">("night");
+  const [cardsOffset, setCardsOffset] = useState(0);
+  const [cardsArrows, setCardsArrows] = useState({ prevDisabled: true, nextDisabled: false });
   const [miceActiveIdx, setMiceActiveIdx] = useState(0);
-  const [nightArrows,  setNightArrows]  = useState({ prevDisabled: true,  nextDisabled: false });
-  const [sunsetArrows, setSunsetArrows] = useState({ prevDisabled: true,  nextDisabled: false });
 
-
-  // ── Reset scroll + arrow state when returning to default or switching section ──
+  // ── Reset slider offset + arrows when switching tabs ──
   useEffect(() => {
-    if (activeSection === null) {
-      // Reset both sliders to start when closing
-      if (nightCardsRef.current)  { nightCardsRef.current.scrollLeft  = 0; }
-      if (sunsetCardsRef.current) { sunsetCardsRef.current.scrollLeft = 0; }
-      setNightArrows({ prevDisabled: true, nextDisabled: false });
-      setSunsetArrows({ prevDisabled: true, nextDisabled: false });
-    } else if (activeSection === "night") {
-      // Night is RTL — default scroll is at the rightmost end, so "prev" (go right) is disabled
-      const el = nightCardsRef.current;
-      if (el) {
-        const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
-        setNightArrows({ prevDisabled: el.scrollLeft <= 2, nextDisabled: atEnd });
-      }
-    } else if (activeSection === "sunset") {
-      const el = sunsetCardsRef.current;
-      if (el) {
-        setNightArrows({ prevDisabled: true, nextDisabled: false });
-        setSunsetArrows({ prevDisabled: el.scrollLeft <= 2, nextDisabled: el.scrollLeft >= el.scrollWidth - el.clientWidth - 2 });
-      }
-    }
-  }, [activeSection]);
+    setCardsOffset(0);
+    setCardsArrows({ prevDisabled: true, nextDisabled: false });
+  }, [activeTab]);
+
+  const slideCards = (dir: "prev" | "next") => {
+    const row     = (activeTab === "night" ? nightCardsRef : sunsetCardsRef).current;
+    const wrapper = cardsWrapperRef.current;
+    if (!row || !wrapper) return;
+    const step      = 310;
+    const maxOffset = row.offsetWidth - wrapper.clientWidth;
+    const next      = dir === "prev"
+      ? Math.max(0, cardsOffset - step)
+      : Math.min(maxOffset, cardsOffset + step);
+    setCardsOffset(next);
+    setCardsArrows({ prevDisabled: next <= 0, nextDisabled: next >= maxOffset });
+  };
 
   // ── Preload MICE images + force background-clip repaint on active change ──
   // background-clip:text caches its composited layer; directly patching the
@@ -403,7 +395,7 @@ export default function HomePage() {
 
       // ── Logo + nav scroll ─────────────────────────────────────────────────
       const logoScroll = { trigger: fold, start: "top 68%", end: "top 0%", scrub: 1.2 };
-      gsap.to(logo, { x: vw / 2 - finalW / 2, y: 28 - finalH / 2, width: finalW, ease: "none", scrollTrigger: logoScroll });
+      gsap.to(logo, { x: vw / 2 - finalW / 2, y: 44 - finalH / 2, width: finalW, ease: "none", scrollTrigger: logoScroll });
       if (navLeft)  gsap.to(navLeft,  { x: -30, ease: "none", scrollTrigger: logoScroll });
       if (navRight) gsap.to(navRight, { x:  30, ease: "none", scrollTrigger: logoScroll });
 
@@ -479,36 +471,6 @@ export default function HomePage() {
         BOOK NOW
       </RunningStrokeButton>
 
-      {/* ── Custom cursor — shown on section hover, hidden when section is active ── */}
-      {!activeSection && (nightHovered || sunsetHovered) && (
-        <div
-          aria-hidden
-          style={{
-            position: "fixed",
-            left: cursorPos.x,
-            top: cursorPos.y,
-            transform: "translate(-50%, -50%)",
-            width: 128,
-            height: 128,
-            borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.6)",
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 3,
-            pointerEvents: "none",
-            zIndex: 9999,
-          }}
-        >
-          <span style={{ fontSize: "9px", letterSpacing: "0.22em", color: "#ffffff", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 400, textTransform: "uppercase" }}>EXPLORE</span>
-          <span style={{ fontSize: "9px", letterSpacing: "0.22em", color: "#ffffff", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 400, textTransform: "uppercase" }}>{nightHovered ? "NIGHT" : "SUNSET"}</span>
-          <span style={{ fontSize: "9px", letterSpacing: "0.22em", color: "#ffffff", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 400, textTransform: "uppercase" }}>EVENTS</span>
-        </div>
-      )}
 
 
       {/* ── Fixed video — stays in place, content scrolls over it ─────────── */}
@@ -523,16 +485,12 @@ export default function HomePage() {
       {/* spacer so content starts below the fold */}
       <div style={{ height: "100vh" }} />
 
-      {/* ── Split SUNSET / NIGHT events section ─────────────────────────────── */}
+      {/* ── Tab-based events section ─────────────────────────────────────────── */}
       <div
         ref={foldRef}
-        style={{
-          position: "relative",
-          zIndex: 10,
-          marginTop: "-32vh",
-        }}
+        style={{ position: "relative", zIndex: 10, marginTop: "-32vh" }}
       >
-        {/* ── Editorial strip — collapses to centred single-col on mobile ── */}
+        {/* ── Editorial strip — black patch with logo + heading ── */}
         <div style={{
           background: "#000000",
           display: "grid",
@@ -568,239 +526,156 @@ export default function HomePage() {
             </div>
           )}
         </div>
+        {/* Tab section — background image contained here only */}
+        <div style={{ position: "relative", overflow: "hidden" }}>
+          {/* Background images — cross-fade on tab change */}
+          <img
+            src="/images/Tabs/Night.png"
+            alt="" aria-hidden
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "night" ? 1 : 0, transition: "opacity 0.8s ease" }}
+          />
+          <img
+            src="/images/Tabs/Sunset.png"
+            alt="" aria-hidden
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "sunset" ? 1 : 0, transition: "opacity 0.8s ease" }}
+          />
+          {/* Top + bottom fade */}
+          <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 70%, #000 100%)", pointerEvents: "none" }} />
 
-        {/* ── Second fold: stacked BG images + CSS vignette + content ── */}
-        <div style={{ position: "relative", height: isMobile ? "auto" : "100vh", overflow: "hidden" }}>
+        {/* Content layer */}
+        <div style={{ position: "relative", zIndex: 2, paddingTop: "clamp(80px, 12vh, 140px)", paddingBottom: "clamp(60px, 8vh, 100px)" }}>
 
-          {/* ── Background images (desktop only) ── */}
-          {!isMobile && (
-            <>
-              {/* Layer 1: Iconic Nights bg */}
-              <img
-                src="/IMAGES/Split/NIGHT.png"
-                alt="" aria-hidden
-                style={{ position: "absolute", top: 0, left: 0, width: "102%", height: "102%", margin: "-1%", objectFit: "cover", objectPosition: "top center", pointerEvents: "none", filter: "blur(3px)" }}
-              />
-              {/* Layer 2: Sunset Parties bg — hidden in default state, revealed on hover */}
-              <img
-                src="/IMAGES/Split/SUNSET.png"
-                alt="" aria-hidden
-                style={{ position: "absolute", top: 0, left: 0, width: "102%", height: "102%", margin: "-1%", objectFit: "cover", objectPosition: "top center", pointerEvents: "none", filter: "blur(3px)", opacity: sunsetHovered ? 1 : 0, transition: "opacity 0.6s ease" }}
-              />
-            </>
-          )}
-
-          {/* ── CSS vignette — edge gradients (always on) ── */}
-          {!isMobile && (
-            <div
-              aria-hidden
-              style={{
-                position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
-                background: [
-                  "linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 65%, #000000 100%)",
-                  "linear-gradient(to right,  rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 88%, rgba(0,0,0,0.55) 100%)",
-                ].join(", "),
-              }}
-            />
-          )}
-
-          {/* ── Dark dim overlay — heavy in default state, lifts on hover ── */}
-          {!isMobile && (
-            <div
-              aria-hidden
-              style={{
-                position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
-                background: "#000",
-                opacity: (nightHovered || sunsetHovered || activeSection) ? 0 : 0.52,
-                transition: "opacity 0.55s ease",
-              }}
-            />
-          )}
-
-          {/* ── Content layer ── */}
-          <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: isMobile ? "column" : "row", height: isMobile ? "auto" : "100%", overflow: "hidden" }}>
-
-            {/* LEFT: Iconic Nights */}
-            <div
-              onMouseEnter={() => { if (!activeSection) setNightHovered(true); }}
-              onMouseLeave={() => setNightHovered(false)}
-              onMouseMove={e => setCursorPos({ x: e.clientX, y: e.clientY })}
-              onClick={() => { if (!activeSection) { setActiveSection("night"); setNightHovered(false); } }}
-              style={{
-                width: isMobile ? "100%" : (activeSection === "night" ? "100%" : activeSection === "sunset" ? "0%" : nightHovered ? "74%" : sunsetHovered ? "26%" : "50%"),
-                minWidth: 0,
-                flexShrink: 0,
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                paddingTop: isMobile ? "40px" : "clamp(40px, 7vh, 80px)",
-                paddingBottom: isMobile ? "80px" : "clamp(60px, 8vh, 80px)",
-                paddingLeft: isMobile ? "20px" : 0,
-                paddingRight: isMobile ? "20px" : "clamp(24px, 3vw, 48px)",
-                height: isMobile ? "auto" : "100%",
-                position: "relative",
-                opacity: activeSection === "sunset" ? 0 : (!activeSection && sunsetHovered) ? 0.5 : 1,
-                cursor: activeSection === "night" ? "default" : "none",
-                transition: "width 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease",
-              }}
-            >
-              {isMobile && (
-                <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-                  <img src="/IMAGES/Split/NIGHT.png" alt=""
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
-                  />
-                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} />
-                </div>
-              )}
-
-              <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
-                <h2 style={{ fontFamily: "var(--font-fenul, Georgia, serif)", fontWeight: 500, fontSize: "40px", letterSpacing: "-0.02em", lineHeight: 1, color: "#fff", textTransform: "uppercase", margin: "0 0 clamp(20px, 3vh, 32px)", textAlign: "center", padding: "0 clamp(24px, 3vw, 48px)" }}>
-                  ICONIC NIGHTS
-                </h2>
-                <div ref={nightCardsRef} onScroll={e => { const el = e.currentTarget; setNightArrows({ prevDisabled: el.scrollLeft <= 2, nextDisabled: el.scrollLeft >= el.scrollWidth - el.clientWidth - 2 }); }} style={{ display: "flex", direction: "rtl", gap: "clamp(10px, 1.2vw, 16px)", overflowX: "auto", scrollbarWidth: "none" }}>
-                  {EVENTS.filter(e => e.category === "night").map(event => (
-                    <div key={event.id} style={{ direction: "ltr", flexShrink: 0 }}>
-                      <EventCard event={event} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Scroll arrows — visible only when section is active */}
-              {activeSection === "night" && !isMobile && (
-                <div
-                  onClick={e => e.stopPropagation()}
-                  style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: "clamp(16px, 2.5vh, 28px)", position: "relative", zIndex: 10 }}
-                >
-                  <SliderControls
-                    dark
-                    prevDisabled={nightArrows.prevDisabled}
-                    nextDisabled={nightArrows.nextDisabled}
-                    onPrev={() => { nightCardsRef.current?.scrollBy({ left: -270, behavior: "smooth" }); }}
-                    onNext={() => { nightCardsRef.current?.scrollBy({ left:  270, behavior: "smooth" }); }}
-                  />
-                </div>
-              )}
-
-              {/* Close button */}
-              {activeSection === "night" && !isMobile && (
-                <button
-                  onClick={e => { e.stopPropagation(); setActiveSection(null); }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#fff"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.35)"; }}
-                  style={{
-                    position: "absolute", top: "clamp(20px, 3vh, 36px)", right: "clamp(24px, 3vw, 48px)",
-                    width: 48, height: 48, borderRadius: "50%",
-                    background: "transparent", border: "1px solid rgba(255,255,255,0.35)",
-                    cursor: "pointer", color: "#fff",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    zIndex: 10, transition: "border-color 0.2s ease",
-                  }}
-                >
-                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                    <path d="M1 1L12 12M12 1L1 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              )}
-            </div>
-
-            {/* Divider */}
-            {!isMobile && <div style={{ width: "1px", background: "rgba(255,255,255,0.08)", flexShrink: 0, zIndex: 5, transition: "opacity 0.5s ease", opacity: (activeSection || nightHovered || sunsetHovered) ? 0 : 1 }} />}
-
-            {/* RIGHT: Sunset Parties */}
-            <div
-              onMouseEnter={() => { if (!activeSection) setSunsetHovered(true); }}
-              onMouseLeave={() => setSunsetHovered(false)}
-              onMouseMove={e => setCursorPos({ x: e.clientX, y: e.clientY })}
-              onClick={() => { if (!activeSection) { setActiveSection("sunset"); setSunsetHovered(false); } }}
-              style={{
-                flex: 1,
-                minWidth: 0,
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                paddingTop: isMobile ? "40px" : "clamp(40px, 7vh, 80px)",
-                paddingBottom: isMobile ? "80px" : "clamp(60px, 8vh, 80px)",
-                paddingLeft: isMobile ? "20px" : "clamp(24px, 3vw, 48px)",
-                paddingRight: isMobile ? "20px" : 0,
-                height: isMobile ? "auto" : "100%",
-                position: "relative",
-                opacity: activeSection === "night" ? 0 : (!activeSection && nightHovered) ? 0.5 : 1,
-                cursor: activeSection === "sunset" ? "default" : "none",
-                transition: "opacity 0.6s ease",
-              }}
-            >
-              {isMobile && (
-                <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-                  <img src="/IMAGES/Split/SUNSET.png" alt=""
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
-                  />
-                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }} />
-                </div>
-              )}
-
-              <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
-                <h2 style={{ fontFamily: "var(--font-fenul, Georgia, serif)", fontWeight: 500, fontSize: "40px", letterSpacing: "-0.02em", lineHeight: 1, color: "#fff", textTransform: "uppercase", margin: "0 0 clamp(20px, 3vh, 32px)", textAlign: "center", padding: "0 clamp(24px, 3vw, 48px)" }}>
-                  SUNSET PARTIES
-                </h2>
-                <div ref={sunsetCardsRef} onScroll={e => { const el = e.currentTarget; setSunsetArrows({ prevDisabled: el.scrollLeft <= 2, nextDisabled: el.scrollLeft >= el.scrollWidth - el.clientWidth - 2 }); }} style={{ display: "flex", gap: "clamp(10px, 1.2vw, 16px)", overflowX: "auto", scrollbarWidth: "none" }}>
-                  {EVENTS.filter(e => e.category === "sunset").map(event => <EventCard key={event.id} event={event} />)}
-                </div>
-              </div>
-
-              {/* Scroll arrows — visible only when section is active */}
-              {activeSection === "sunset" && !isMobile && (
-                <div
-                  onClick={e => e.stopPropagation()}
-                  style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: "clamp(16px, 2.5vh, 28px)", position: "relative", zIndex: 10 }}
-                >
-                  <SliderControls
-                    dark
-                    prevDisabled={sunsetArrows.prevDisabled}
-                    nextDisabled={sunsetArrows.nextDisabled}
-                    onPrev={() => { sunsetCardsRef.current?.scrollBy({ left: -270, behavior: "smooth" }); }}
-                    onNext={() => { sunsetCardsRef.current?.scrollBy({ left:  270, behavior: "smooth" }); }}
-                  />
-                </div>
-              )}
-
-              {/* Close button */}
-              {activeSection === "sunset" && !isMobile && (
-                <button
-                  onClick={e => { e.stopPropagation(); setActiveSection(null); }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#fff"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.35)"; }}
-                  style={{
-                    position: "absolute", top: "clamp(20px, 3vh, 36px)", right: "clamp(24px, 3vw, 48px)",
-                    width: 48, height: 48, borderRadius: "50%",
-                    background: "transparent", border: "1px solid rgba(255,255,255,0.35)",
-                    cursor: "pointer", color: "#fff",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    zIndex: 10, transition: "border-color 0.2s ease",
-                  }}
-                >
-                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                    <path d="M1 1L12 12M12 1L1 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              )}
-            </div>
-
-          </div>
-
-          {/* VIEW CALENDAR — centred at bottom */}
-          {!isMobile && (
-            <div style={{ position: "absolute", bottom: "clamp(24px, 4vh, 40px)", left: 0, right: 0, zIndex: 3, textAlign: "center" }}>
+          {/* Tab Switcher */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "clamp(32px, 5vh, 56px)" }}>
+            <div style={{ display: "flex", gap: "10px", padding: "10px", borderRadius: "60px" }}>
+              {/* Iconic Nights tab */}
               <button
-                className="bracket-btn"
-                onClick={() => navigateTo("/events")}
-                style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.55)", fontSize: "12px", letterSpacing: "0.22em", cursor: "pointer", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 300 }}
+                onClick={() => setActiveTab("night")}
+                style={{
+                  position: "relative",
+                  width: isMobile ? "clamp(140px, 40vw, 200px)" : "361px",
+                  height: "68px",
+                  borderRadius: "60px",
+                  border: activeTab === "night" ? "1px solid #16398d" : "1px solid transparent",
+                  background: activeTab === "night" ? "rgba(0,0,0,0.55)" : "transparent",
+                  cursor: "pointer",
+                  overflow: "hidden",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  transition: "border-color 0.6s ease, background 0.6s ease",
+                }}
               >
-                [ VIEW CALENDAR ]
+                {activeTab === "night" && (
+                  <img
+                    src="/images/Tabs/Night.png"
+                    alt="" aria-hidden
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
+                  />
+                )}
+                <span style={{
+                  position: "relative",
+                  zIndex: 1,
+                  fontFamily: "var(--font-fenul, Georgia, serif)",
+                  fontSize: isMobile ? "clamp(16px, 4vw, 22px)" : "30px",
+                  fontWeight: 500,
+                  color: "#fff",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.02em",
+                  whiteSpace: "nowrap",
+                }}>
+                  ICONIC NIGHTS
+                </span>
+              </button>
+
+              {/* Sunset Parties tab */}
+              <button
+                onClick={() => setActiveTab("sunset")}
+                style={{
+                  position: "relative",
+                  width: isMobile ? "clamp(140px, 40vw, 200px)" : "361px",
+                  height: "68px",
+                  borderRadius: "60px",
+                  border: activeTab === "sunset" ? "1px solid #eb722f" : "1px solid transparent",
+                  background: activeTab === "sunset" ? "rgba(0,0,0,0.55)" : "transparent",
+                  cursor: "pointer",
+                  overflow: "hidden",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  transition: "border-color 0.6s ease, background 0.6s ease",
+                }}
+              >
+                {activeTab === "sunset" && (
+                  <img
+                    src="/images/Tabs/Sunset.png"
+                    alt="" aria-hidden
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
+                  />
+                )}
+                <span style={{
+                  position: "relative",
+                  zIndex: 1,
+                  fontFamily: "var(--font-fenul, Georgia, serif)",
+                  fontSize: isMobile ? "clamp(16px, 4vw, 22px)" : "30px",
+                  fontWeight: 500,
+                  color: "#fff",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.02em",
+                  whiteSpace: "nowrap",
+                }}>
+                  SUNSET PARTIES
+                </span>
               </button>
             </div>
+          </div>
+
+
+          {/* Event cards — transform slider so no overflow container breaks background-attachment:fixed */}
+          <div ref={cardsWrapperRef} style={{ clipPath: "inset(-80px 0)", overflow: "visible" }}>
+            <div
+              ref={activeTab === "night" ? nightCardsRef : sunsetCardsRef}
+              style={{
+                display: "flex",
+                width: "max-content",
+                gap: "clamp(10px, 1.2vw, 16px)",
+                paddingLeft: "clamp(24px, 5vw, 72px)",
+                paddingRight: "clamp(24px, 5vw, 72px)",
+                transform: `translateX(-${cardsOffset}px)`,
+                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                willChange: "transform",
+              }}
+            >
+              {EVENTS.filter(e => e.category === activeTab).map(event => (
+                <EventCard key={event.id} event={event} glowColor={activeTab === "night" ? "blue" : "orange"} />
+              ))}
+            </div>
+          </div>
+
+          {/* Slider controls */}
+          {!isMobile && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "clamp(20px, 3vh, 32px)" }}>
+              <SliderControls
+                dark
+                prevDisabled={cardsArrows.prevDisabled}
+                nextDisabled={cardsArrows.nextDisabled}
+                onPrev={() => slideCards("prev")}
+                onNext={() => slideCards("next")}
+              />
+            </div>
           )}
+
+          {/* View Calendar */}
+          <div style={{ textAlign: "center", marginTop: "clamp(32px, 4vh, 48px)" }}>
+            <button
+              className="bracket-btn"
+              onClick={() => navigateTo("/events")}
+              style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.55)", fontSize: "12px", letterSpacing: "0.22em", cursor: "pointer", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 300 }}
+            >
+              [ VIEW CALENDAR ]
+            </button>
+          </div>
+
         </div>
+        </div>{/* end tab section */}
       </div>
 
       {/* ── Subscribe Form ────────────────────────────────────────────────────── */}

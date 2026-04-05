@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePageTransition } from "@/providers/TransitionProvider";
 import { Footer } from "@/components/layout/Footer";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import type { Event } from "@/constants";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -177,25 +178,25 @@ function VIPFloorplan() {
         <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px", letterSpacing: "0.1em", fontFamily: "var(--font-saans, sans-serif)", fontWeight: 300 }}>
           Bottle service · Dedicated host · Priority access
         </p>
-        <button
-          onClick={() => navigateTo("/book-vip")}
-          style={{
-            background: "#D4A560",
-            color: "#000",
-            border: "none",
-            padding: "10px 22px",
-            fontSize: "9px",
-            letterSpacing: "0.2em",
-            fontFamily: "var(--font-saans, sans-serif)",
-            fontWeight: 400,
-            textTransform: "uppercase",
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-          }}
-        >
-          Reserve a Table
-        </button>
+        <MagneticButton onClick={() => navigateTo("/book-vip")} style={{ flexShrink: 0 }}>
+          <button
+            style={{
+              background: "#D4A560",
+              color: "#000",
+              border: "none",
+              padding: "10px 22px",
+              fontSize: "11px",
+              letterSpacing: "0.2em",
+              fontFamily: "var(--font-saans, sans-serif)",
+              fontWeight: 400,
+              textTransform: "uppercase",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Reserve a Table
+          </button>
+        </MagneticButton>
       </div>
     </div>
   );
@@ -225,7 +226,7 @@ export function EventDetailClient({ event }: { event: Event }) {
       trigger: mainRef.current,
       start: "top -120px",
       onEnter: () => gsap.to(stickyRef.current, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }),
-      onLeaveBack: () => gsap.to(stickyRef.current, { y: -80, opacity: 0, duration: 0.3, ease: "power2.in" }),
+      onLeaveBack: () => gsap.to(stickyRef.current, { y: -88, opacity: 0, duration: 0.3, ease: "power2.in" }),
     });
   }, []);
 
@@ -242,13 +243,13 @@ export function EventDetailClient({ event }: { event: Event }) {
           position: "fixed",
           top: 0, left: 0, right: 0,
           zIndex: 200,
-          transform: "translateY(-80px)",
+          transform: "translateY(-88px)",
           opacity: 0,
           background: "rgba(8,8,8,0.95)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(255,255,255,0.08)",
           padding: "0 clamp(24px, 5vw, 72px)",
-          height: "64px",
+          height: "88px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -262,32 +263,33 @@ export function EventDetailClient({ event }: { event: Event }) {
         </div>
         <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
           {!isMobile && (
-            <button
-              onClick={() => navigateTo("/book-vip")}
-              style={{
-                background: "transparent",
-                border: "1px solid rgba(255,255,255,0.18)",
-                color: "rgba(255,255,255,0.7)",
-                padding: "9px 18px",
-                fontSize: "9px",
-                letterSpacing: "0.18em",
-                fontFamily: "var(--font-saans, sans-serif)",
-                fontWeight: 300,
-                textTransform: "uppercase",
-                cursor: "pointer",
-              }}
-            >
-              Book Tables
-            </button>
+            <MagneticButton onClick={() => document.getElementById("vip-tables")?.scrollIntoView({ behavior: "smooth" })}>
+              <button
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,0.18)",
+                  color: "rgba(255,255,255,0.7)",
+                  padding: "9px 18px",
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  fontFamily: "var(--font-saans, sans-serif)",
+                  fontWeight: 300,
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+              >
+                Book Tables
+              </button>
+            </MagneticButton>
           )}
           <button
-            onClick={() => navigateTo("/tickets")}
+            onClick={() => document.getElementById("tickets")?.scrollIntoView({ behavior: "smooth" })}
             style={{
               background: "rgba(255,255,255,0.92)",
               color: "#000",
               border: "none",
               padding: "9px 18px",
-              fontSize: "9px",
+              fontSize: "11px",
               letterSpacing: "0.18em",
               fontFamily: "var(--font-saans, sans-serif)",
               fontWeight: 400,
@@ -312,7 +314,7 @@ export function EventDetailClient({ event }: { event: Event }) {
         }}
       >
         {/* ── Left column: artwork + event info ───────────────────────── */}
-        <div>
+        <div style={{ position: isMobile ? "static" : "sticky", top: "clamp(80px, 10vw, 120px)" }}>
           {/* Artwork portrait */}
           <div style={{
             width: isMobile ? "60%" : "100%",
@@ -338,7 +340,7 @@ export function EventDetailClient({ event }: { event: Event }) {
 
           {/* Date */}
           <p style={{
-            fontSize: "10px",
+            fontSize: "12px",
             letterSpacing: "0.16em",
             color: "rgba(255,255,255,0.3)",
             fontFamily: "var(--font-saans, sans-serif)",
@@ -351,11 +353,11 @@ export function EventDetailClient({ event }: { event: Event }) {
 
           {/* Artist name */}
           <h1 style={{
-            fontFamily: "var(--font-fenul, Georgia, serif)",
-            fontSize: "clamp(22px, 2.8vw, 38px)",
-            fontWeight: 500,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.05,
+            fontFamily: "var(--font-saans, sans-serif)",
+            fontSize: "clamp(20px, 2.2vw, 28px)",
+            fontWeight: 400,
+            letterSpacing: "0.01em",
+            lineHeight: 1.1,
             color: "#fff",
             textTransform: "uppercase",
             margin: "0 0 10px",
@@ -365,7 +367,7 @@ export function EventDetailClient({ event }: { event: Event }) {
 
           {/* Time */}
           <p style={{
-            fontSize: "11px",
+            fontSize: "13px",
             letterSpacing: "0.08em",
             color: "rgba(255,255,255,0.35)",
             fontFamily: "var(--font-saans, sans-serif)",
@@ -377,7 +379,7 @@ export function EventDetailClient({ event }: { event: Event }) {
 
           {/* Description */}
           <p style={{
-            fontSize: "13px",
+            fontSize: "15px",
             lineHeight: 1.7,
             color: "rgba(255,255,255,0.5)",
             fontFamily: "var(--font-saans, sans-serif)",
@@ -390,25 +392,24 @@ export function EventDetailClient({ event }: { event: Event }) {
         {/* ── Right column: tickets + VIP floorplan ───────────────────── */}
         <div>
           {/* Ticket options */}
-          <div style={{ marginBottom: "clamp(48px, 6vw, 80px)" }}>
+          <div id="tickets" style={{ marginBottom: "clamp(48px, 6vw, 80px)" }}>
             <p style={{
-              fontSize: "10px",
-              letterSpacing: "0.2em",
+              fontSize: "12px",
+              letterSpacing: "0.1em",
               color: "rgba(255,255,255,0.3)",
               fontFamily: "var(--font-saans, sans-serif)",
               fontWeight: 300,
-              textTransform: "uppercase",
               marginBottom: "10px",
             }}>
               Ticket Options
             </p>
             <h2 style={{
-              fontFamily: "var(--font-fenul, Georgia, serif)",
-              fontSize: "clamp(24px, 3vw, 40px)",
-              fontWeight: 500,
-              letterSpacing: "-0.02em",
+              fontFamily: "var(--font-saans, sans-serif)",
+              fontSize: "clamp(22px, 2.4vw, 30px)",
+              fontWeight: 400,
+              letterSpacing: "0.01em",
               color: "#fff",
-              textTransform: "uppercase",
+              textTransform: "none",
               margin: "0 0 32px",
             }}>
               Choose Your Experience
@@ -454,7 +455,7 @@ export function EventDetailClient({ event }: { event: Event }) {
                   )}
 
                   <p style={{
-                    fontSize: "9px",
+                    fontSize: "11px",
                     letterSpacing: "0.18em",
                     color: "rgba(255,255,255,0.35)",
                     fontFamily: "var(--font-saans, sans-serif)",
@@ -471,9 +472,9 @@ export function EventDetailClient({ event }: { event: Event }) {
                   <p style={{
                     fontSize: "clamp(24px, 2.5vw, 32px)",
                     fontWeight: 300,
-                    letterSpacing: "-0.02em",
+                    letterSpacing: "-0.01em",
                     color: tier.popular ? "#D4A560" : "#fff",
-                    fontFamily: "var(--font-fenul, Georgia, serif)",
+                    fontFamily: "var(--font-saans, sans-serif)",
                     marginBottom: "20px",
                   }}>
                     {tier.price}
@@ -514,7 +515,7 @@ export function EventDetailClient({ event }: { event: Event }) {
                         ? "rgba(255,255,255,0.2)"
                         : "#000",
                       border: tier.soldOut ? "1px solid rgba(255,255,255,0.1)" : "none",
-                      fontSize: "9px",
+                      fontSize: "11px",
                       letterSpacing: "0.18em",
                       fontFamily: "var(--font-saans, sans-serif)",
                       fontWeight: 400,
@@ -531,25 +532,24 @@ export function EventDetailClient({ event }: { event: Event }) {
 
           {/* VIP Floorplan */}
           {event.hasVIP && (
-            <div>
+            <div id="vip-tables">
               <p style={{
-                fontSize: "10px",
-                letterSpacing: "0.2em",
+                fontSize: "12px",
+                letterSpacing: "0.1em",
                 color: "rgba(212,165,96,0.6)",
                 fontFamily: "var(--font-saans, sans-serif)",
                 fontWeight: 300,
-                textTransform: "uppercase",
                 marginBottom: "10px",
               }}>
                 VIP Experience
               </p>
               <h2 style={{
-                fontFamily: "var(--font-fenul, Georgia, serif)",
-                fontSize: "clamp(24px, 3vw, 40px)",
-                fontWeight: 500,
-                letterSpacing: "-0.02em",
+                fontFamily: "var(--font-saans, sans-serif)",
+                fontSize: "clamp(22px, 2.4vw, 30px)",
+                fontWeight: 400,
+                letterSpacing: "0.01em",
                 color: "#fff",
-                textTransform: "uppercase",
+                textTransform: "none",
                 margin: "0 0 8px",
               }}>
                 Reserve Your Table
@@ -575,23 +575,22 @@ export function EventDetailClient({ event }: { event: Event }) {
       {/* ── Lineup ─────────────────────────────────────────────────────── */}
       <section style={{ padding: "clamp(48px, 6vw, 80px) clamp(24px, 5vw, 72px)" }}>
         <p style={{
-          fontSize: "10px",
-          letterSpacing: "0.2em",
+          fontSize: "12px",
+          letterSpacing: "0.1em",
           color: "rgba(255,255,255,0.3)",
           fontFamily: "var(--font-saans, sans-serif)",
           fontWeight: 300,
-          textTransform: "uppercase",
           marginBottom: "10px",
         }}>
           Lineup
         </p>
         <h2 style={{
-          fontFamily: "var(--font-fenul, Georgia, serif)",
-          fontSize: "clamp(24px, 3vw, 40px)",
-          fontWeight: 500,
-          letterSpacing: "-0.02em",
+          fontFamily: "var(--font-saans, sans-serif)",
+          fontSize: "clamp(22px, 2.4vw, 30px)",
+          fontWeight: 400,
+          letterSpacing: "0.01em",
           color: "#fff",
-          textTransform: "uppercase",
+          textTransform: "none",
           margin: "0 0 32px",
         }}>
           Artists
@@ -664,28 +663,27 @@ export function EventDetailClient({ event }: { event: Event }) {
         textAlign: "center",
       }}>
         <p style={{
-          fontSize: "10px",
-          letterSpacing: "0.2em",
+          fontSize: "12px",
+          letterSpacing: "0.1em",
           color: "rgba(255,255,255,0.25)",
           fontFamily: "var(--font-saans, sans-serif)",
           fontWeight: 300,
-          textTransform: "uppercase",
         }}>
           Don&apos;t Miss Out
         </p>
         <h2 style={{
-          fontFamily: "var(--font-fenul, Georgia, serif)",
-          fontSize: "clamp(32px, 5vw, 72px)",
-          fontWeight: 500,
-          letterSpacing: "-0.03em",
-          lineHeight: 0.95,
+          fontFamily: "var(--font-saans, sans-serif)",
+          fontSize: "clamp(28px, 4vw, 56px)",
+          fontWeight: 400,
+          letterSpacing: "0.01em",
+          lineHeight: 1.05,
           color: "#fff",
           textTransform: "uppercase",
           margin: 0,
         }}>
           {event.artist}
           <br />
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.55em", letterSpacing: "0.02em" }}>{event.date} · AMOK</span>
+          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.45em", letterSpacing: "0.1em", fontWeight: 300 }}>{event.date} · AMOK</span>
         </h2>
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
           <button
@@ -695,7 +693,7 @@ export function EventDetailClient({ event }: { event: Event }) {
               color: "#000",
               border: "none",
               padding: "12px 32px",
-              fontSize: "9px",
+              fontSize: "11px",
               letterSpacing: "0.18em",
               fontFamily: "var(--font-saans, sans-serif)",
               fontWeight: 400,
@@ -706,23 +704,24 @@ export function EventDetailClient({ event }: { event: Event }) {
             Buy Tickets
           </button>
           {event.hasVIP && (
-            <button
-              onClick={() => navigateTo("/book-vip")}
-              style={{
-                background: "transparent",
-                color: "rgba(255,255,255,0.6)",
-                border: "1px solid rgba(255,255,255,0.18)",
-                padding: "12px 32px",
-                fontSize: "9px",
-                letterSpacing: "0.18em",
-                fontFamily: "var(--font-saans, sans-serif)",
-                fontWeight: 300,
-                textTransform: "uppercase",
-                cursor: "pointer",
-              }}
-            >
-              Book Tables
-            </button>
+            <MagneticButton onClick={() => navigateTo("/book-vip")}>
+              <button
+                style={{
+                  background: "transparent",
+                  color: "rgba(255,255,255,0.6)",
+                  border: "1px solid rgba(255,255,255,0.18)",
+                  padding: "12px 32px",
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  fontFamily: "var(--font-saans, sans-serif)",
+                  fontWeight: 300,
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+              >
+                Book Tables
+              </button>
+            </MagneticButton>
           )}
         </div>
       </section>

@@ -71,12 +71,7 @@ function EmptyCard({ date }: { date: Date }) {
         alignItems: "center",
         justifyContent: "center",
       }}>
-        <span style={{
-          width: "24px",
-          height: "1px",
-          background: "rgba(255,255,255,0.2)",
-          display: "block",
-        }} />
+        <span style={{ width: "24px", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
       </div>
     </div>
   );
@@ -101,7 +96,7 @@ function filterBtnStyle(active: boolean): React.CSSProperties {
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
-export default function CalendarPage() {
+export default function BookVIPPage() {
   const isMobile = useIsMobile();
   const footerSentinelRef = useRef<HTMLDivElement>(null);
 
@@ -215,7 +210,7 @@ export default function CalendarPage() {
           textAlign: "center",
           margin: 0,
         }}>
-          Calendar
+          Book Tables
         </h1>
       </div>
 
@@ -360,7 +355,7 @@ export default function CalendarPage() {
               {slots.map(({ date, events }) =>
                 events.length > 0
                   ? events.map(event => (
-                      <EventCard key={event.id} event={event} />
+                      <EventCard key={event.id} event={event} tableOnly />
                     ))
                   : <EmptyCard key={toDateKey(date)} date={date} />
               )}

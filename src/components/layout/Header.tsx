@@ -42,6 +42,7 @@ export function Header() {
         justifyContent: "center",
         padding: "28px 40px",
         pointerEvents: "none",
+        background: (pathname === "/events" || pathname === "/book-vip") ? "#000" : "transparent",
       }}
     >
       <nav
