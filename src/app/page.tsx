@@ -530,12 +530,12 @@ export default function HomePage() {
         <div style={{ position: "relative", overflow: "hidden" }}>
           {/* Background images — cross-fade on tab change */}
           <img
-            src="/images/Tabs/Night.png"
+            src="/IMAGES/Tabs/Night.png"
             alt="" aria-hidden
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "night" ? 1 : 0, transition: "opacity 0.8s ease" }}
           />
           <img
-            src="/images/Tabs/Sunset.png"
+            src="/IMAGES/Tabs/Sunset.png"
             alt="" aria-hidden
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "sunset" ? 1 : 0, transition: "opacity 0.8s ease" }}
           />
@@ -567,7 +567,7 @@ export default function HomePage() {
               >
                 {activeTab === "night" && (
                   <img
-                    src="/images/Tabs/Night.png"
+                    src="/IMAGES/Tabs/Night.png"
                     alt="" aria-hidden
                     style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
                   />
@@ -606,7 +606,7 @@ export default function HomePage() {
               >
                 {activeTab === "sunset" && (
                   <img
-                    src="/images/Tabs/Sunset.png"
+                    src="/IMAGES/Tabs/Sunset.png"
                     alt="" aria-hidden
                     style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
                   />
