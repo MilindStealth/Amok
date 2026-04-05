@@ -12,6 +12,7 @@ import { Footer } from "@/components/layout/Footer";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { SocialsSection } from "@/components/sections/SocialsSection";
 import { EventCard } from "@/components/ui/EventCard";
+import { WebGLShaderBackground } from "@/components/ui/WebGLShaderBackground";
 import dynamic from "next/dynamic";
 // import { BurnTransitionOverlay } from "@/components/ui/BurnTransitionOverlay"; // commented out
 
@@ -526,19 +527,9 @@ export default function HomePage() {
             </div>
           )}
         </div>
-        {/* Tab section — background image contained here only */}
+        {/* Tab section — WebGL shader background */}
         <div style={{ position: "relative", overflow: "hidden" }}>
-          {/* Background images — cross-fade on tab change */}
-          <img
-            src="/IMAGES/Tabs/Night.png"
-            alt="" aria-hidden
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "night" ? 1 : 0, transition: "opacity 0.8s ease" }}
-          />
-          <img
-            src="/IMAGES/Tabs/Sunset.png"
-            alt="" aria-hidden
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: activeTab === "sunset" ? 1 : 0, transition: "opacity 0.8s ease" }}
-          />
+          <WebGLShaderBackground theme={activeTab} />
           {/* Top + bottom fade */}
           <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 70%, #000 100%)", pointerEvents: "none" }} />
 
@@ -565,16 +556,7 @@ export default function HomePage() {
                   transition: "border-color 0.6s ease, background 0.6s ease",
                 }}
               >
-                {activeTab === "night" && (
-                  <img
-                    src="/IMAGES/Tabs/Night.png"
-                    alt="" aria-hidden
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
-                  />
-                )}
                 <span style={{
-                  position: "relative",
-                  zIndex: 1,
                   fontFamily: "var(--font-fenul, Georgia, serif)",
                   fontSize: isMobile ? "clamp(16px, 4vw, 22px)" : "30px",
                   fontWeight: 500,
@@ -604,16 +586,7 @@ export default function HomePage() {
                   transition: "border-color 0.6s ease, background 0.6s ease",
                 }}
               >
-                {activeTab === "sunset" && (
-                  <img
-                    src="/IMAGES/Tabs/Sunset.png"
-                    alt="" aria-hidden
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", opacity: 0.35, pointerEvents: "none" }}
-                  />
-                )}
                 <span style={{
-                  position: "relative",
-                  zIndex: 1,
                   fontFamily: "var(--font-fenul, Georgia, serif)",
                   fontSize: isMobile ? "clamp(16px, 4vw, 22px)" : "30px",
                   fontWeight: 500,
