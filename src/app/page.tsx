@@ -346,7 +346,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
+    <div style={{ overflowX: "hidden", position: "relative" }}>
 {/* ── Fixed: AMOK SIGN ────────────────────────────────────────────────── */}
       <img ref={logoRef} src="/Logos/AMOK SIGN.svg" alt="AMOK"
         style={{ position: "fixed", top: 0, left: 0, height: "auto", zIndex: 60, mixBlendMode: "difference", pointerEvents: "none" }}
@@ -417,7 +417,7 @@ export default function HomePage() {
           )}
         </div>
         {/* Tab section — WebGL shader background */}
-        <div style={{ position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "relative", overflow: "hidden", background: "#000" }}>
           <WebGLShaderBackground theme={activeTab} />
           {/* Top + bottom fade */}
           <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 70%, #000 100%)", pointerEvents: "none" }} />
@@ -508,26 +508,45 @@ export default function HomePage() {
           </div>
 
 
-          {/* Event cards — transform slider so no overflow container breaks background-attachment:fixed */}
-          <div ref={cardsWrapperRef} style={{ clipPath: "inset(-80px 0)", overflow: "visible" }}>
-            <div
-              ref={activeTab === "night" ? nightCardsRef : sunsetCardsRef}
-              style={{
-                display: "flex",
-                width: "max-content",
-                gap: "clamp(10px, 1.2vw, 16px)",
-                paddingLeft: "clamp(24px, 5vw, 72px)",
-                paddingRight: "clamp(24px, 5vw, 72px)",
-                transform: `translateX(-${cardsOffset}px)`,
-                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-                willChange: "transform",
-              }}
-            >
+          {/* Event cards */}
+          {isMobile ? (
+            <div style={{
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
+              scrollSnapType: "x mandatory",
+              display: "flex",
+              gap: "12px",
+              paddingLeft: "24px",
+              paddingRight: "24px",
+              scrollbarWidth: "none",
+            }}>
               {EVENTS.filter(e => e.category === activeTab).map(event => (
-                <EventCard key={event.id} event={event} glowColor={activeTab === "night" ? "blue" : "orange"} />
+                <div key={event.id} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
+                  <EventCard event={event} glowColor={activeTab === "night" ? "blue" : "orange"} />
+                </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <div ref={cardsWrapperRef} style={{ clipPath: "inset(-80px 0)", overflow: "visible" }}>
+              <div
+                ref={activeTab === "night" ? nightCardsRef : sunsetCardsRef}
+                style={{
+                  display: "flex",
+                  width: "max-content",
+                  gap: "clamp(10px, 1.2vw, 16px)",
+                  paddingLeft: "clamp(24px, 5vw, 72px)",
+                  paddingRight: "clamp(24px, 5vw, 72px)",
+                  transform: `translateX(-${cardsOffset}px)`,
+                  transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                  willChange: "transform",
+                }}
+              >
+                {EVENTS.filter(e => e.category === activeTab).map(event => (
+                  <EventCard key={event.id} event={event} glowColor={activeTab === "night" ? "blue" : "orange"} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Slider controls */}
           {!isMobile && (
@@ -731,6 +750,6 @@ export default function HomePage() {
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <Footer />
-    </>
+    </div>
   );
 }
